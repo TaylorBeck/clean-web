@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      body { 
+        font-family: sans-serif; 
+        padding: 15px; 
+        width: 400px; 
+        margin: 0;
+        background: #f8f9fa;
+      }
+      h2 { 
+        margin: 0 0 15px 0; 
+        color: #2c3e50;
+        text-align: center;
+      }
+      .button-container {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+      }
+      button { 
+        padding: 10px 15px; 
+        font-size: 14px; 
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: background-color 0.2s;
+      }
+      #scrape {
+        background: #3498db;
+        color: white;
+        flex: 1;
+      }
+      #scrape:hover { background: #2980b9; }
+      #scrape:disabled { 
+        background: #bdc3c7; 
+        cursor: not-allowed;
+      }
+      #copy {
+        background: #27ae60;
+        color: white;
+        display: none;
+      }
+      #copy:hover { background: #229954; }
+      .status {
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 15px;
+        margin-bottom: 10px;
+        font-size: 13px;
+      }
+      .metadata {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 15px;
+      }
+      .metadata div {
+        background: white;
+        padding: 8px;
+        border-radius: 4px;
+        border: 1px solid #eee;
+        text-align: center;
+      }
+      .metadata .label {
+        font-size: 11px;
+        color: #666;
+        font-weight: 500;
+      }
+      .metadata .value {
+        font-size: 14px;
+        font-weight: bold;
+        color: #2c3e50;
+      }
+      pre { 
+        white-space: pre-wrap; 
+        font-size: 11px; 
+        max-height: 300px; 
+        overflow-y: auto;
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 12px;
+        margin: 0;
+        line-height: 1.4;
+      }
+      .loading {
+        text-align: center;
+        color: #666;
+        font-style: italic;
+      }
+      .content-item {
+        margin-bottom: 12px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #eee;
+      }
+      .content-type {
+        font-weight: bold;
+        color: #3498db;
+        font-size: 10px;
+        text-transform: uppercase;
+        margin-bottom: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>🧹 Clean Web</h2>
+    <div class="button-container">
+      <button id="scrape">Scrape & Clean</button>
+      <button id="copy">Copy to Clipboard</button>
+    </div>
+    <div id="status" class="status">Click "Scrape & Clean" to extract and clean content from the current page.</div>
+    <div id="metadata" class="metadata" style="display: none;"></div>
+    <pre id="output" style="display: none;"></pre>
+    <script src="popup.js"></script>
+  </body>
+</html>

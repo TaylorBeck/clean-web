@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "Clean Web",
+  "version": "1.0",
+  "description": "Scrape and clean web page content for ML or analysis.",
+  "permissions": ["scripting", "activeTab"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": "icon.png"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "host_permissions": ["<all_urls>"]
+}
