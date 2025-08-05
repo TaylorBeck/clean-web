@@ -165,7 +165,7 @@ async function handleDownload() {
   
   try {
     const textToDownload = formatDataForCopy(currentData);
-    downloadFile(textToDownload, `clean-web-${new Date().toISOString().slice(0, 10)}.txt`);
+    downloadFile(textToDownload, `scrape-${new Date().toISOString().slice(0, 10)}.txt`);
     
     setTimeout(() => {
       ButtonStateManager.setState(elements.download, "success", 1500);
@@ -185,7 +185,7 @@ async function handleBulkDownload() {
   
   try {
     const combinedText = generateBulkDownloadText();
-    downloadFile(combinedText, `clean-web-bulk-${new Date().toISOString().slice(0, 10)}.txt`);
+    downloadFile(combinedText, `scrapes-${new Date().toISOString().slice(0, 10)}.txt`);
     
     setTimeout(() => {
       ButtonStateManager.setState(elements.bulkDownload, "success", 1500);

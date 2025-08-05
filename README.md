@@ -98,7 +98,7 @@ The extension organizes content into three types:
 ## 📁 File Structure
 
 ```
-clean-web/
+page-scraper/
 ├── manifest.json       # Extension configuration
 ├── popup.html         # Main interface
 ├── popup.js           # UI logic and data management
