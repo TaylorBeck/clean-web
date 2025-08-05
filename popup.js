@@ -224,7 +224,10 @@ async function saveToHistory(data) {
       history = history.slice(0, 20);
     }
     
-    await chrome.storage.local.set({ scrapedHistory: history });
+    await chrome.storage.local.set({ 
+      scrapedHistory: history,
+      currentHistoryId: historyEntry.id
+    });
     historyData = history;
     currentHistoryId = historyEntry.id;
     renderHistory();
@@ -235,8 +238,9 @@ async function saveToHistory(data) {
 
 async function loadHistory() {
   try {
-    const result = await chrome.storage.local.get(['scrapedHistory']);
+    const result = await chrome.storage.local.get(['scrapedHistory', 'currentHistoryId']);
     historyData = result.scrapedHistory || [];
+    currentHistoryId = result.currentHistoryId || null;
     renderHistory();
   } catch (error) {
     console.error('Error loading history:', error);
@@ -245,7 +249,7 @@ async function loadHistory() {
 
 async function clearHistory() {
   try {
-    await chrome.storage.local.remove(['scrapedHistory']);
+    await chrome.storage.local.remove(['scrapedHistory', 'currentHistoryId']);
     historyData = [];
     currentHistoryId = null;
     renderHistory();
@@ -257,22 +261,40 @@ async function clearHistory() {
       document.getElementById("output").style.display = "none";
       document.getElementById("action-buttons").classList.remove("show");
     }
+    
+    // Collapse the window if no data to show
+    if (historyData.length === 0 && !currentData) {
+      document.body.classList.remove('expanded');
+    }
   } catch (error) {
     console.error('Error clearing history:', error);
+  }
+}
+
+// Helper function to save current history ID to storage
+async function saveCurrentHistoryId(id) {
+  try {
+    await chrome.storage.local.set({ currentHistoryId: id });
+    currentHistoryId = id;
+  } catch (error) {
+    console.error('Error saving current history ID:', error);
   }
 }
 
 function renderHistory() {
   const historySection = document.getElementById("history-section");
   const historyList = document.getElementById("history-list");
+  const bulkDownloadBtn = document.getElementById("bulk-download");
   
   if (historyData.length === 0) {
     historyList.innerHTML = '<div class="no-history">No scraped pages yet</div>';
     historySection.style.display = "none";
+    if (bulkDownloadBtn) bulkDownloadBtn.style.display = "none";
     return;
   }
   
   historySection.style.display = "block";
+  if (bulkDownloadBtn) bulkDownloadBtn.style.display = "flex";
   
   let historyHtml = '';
   historyData.forEach((entry) => {
@@ -298,19 +320,27 @@ function renderHistory() {
   
   // Add click listeners to history items
   historyList.querySelectorAll('.history-item').forEach(item => {
-    item.addEventListener('click', () => {
+    item.addEventListener('click', async () => {
       const id = item.dataset.id;
-      loadHistoryEntry(id);
+      await loadHistoryEntry(id);
     });
   });
 }
 
-function loadHistoryEntry(id) {
+async function loadHistoryEntry(id) {
   const entry = historyData.find(item => item.id === id);
   if (!entry) return;
   
   currentData = entry.data;
-  currentHistoryId = id;
+  
+  // Save the current selection to storage
+  await saveCurrentHistoryId(id);
+  
+  // Expand the window when loading history
+  document.body.classList.add('expanded');
+
+  const content = document.getElementById("content");
+  content.style.display = "block";
   
   // Update the display
   displayData(entry.data, entry.displayTitle);
@@ -346,6 +376,11 @@ function displayData(data, displayTitle) {
   const metadata = document.getElementById("metadata");
   const output = document.getElementById("output");
   const actionButtons = document.getElementById("action-buttons");
+  const content = document.getElementById("content");
+  
+  // Expand the window when showing data
+  document.body.classList.add('expanded');
+  content.style.display = "block";
   
   // Update metadata stats
   document.getElementById("stat-words").textContent = data.metadata.wordCount;
@@ -372,14 +407,106 @@ function displayData(data, displayTitle) {
   actionButtons.classList.add("show");
 }
 
+// Bulk download all history
+async function bulkDownloadHistory() {
+  if (!historyData || historyData.length === 0) return;
+  
+  const bulkDownloadBtn = document.getElementById("bulk-download");
+  
+  // Show loading state
+  bulkDownloadBtn.classList.add("loading");
+  bulkDownloadBtn.disabled = true;
+  
+  try {
+    let combinedText = `CLEAN WEB - BULK DOWNLOAD\n`;
+    combinedText += `Generated: ${new Date().toLocaleString()}\n`;
+    combinedText += `Total Items: ${historyData.length}\n`;
+    combinedText += `${'='.repeat(80)}\n\n`;
+    
+    historyData.forEach((entry, index) => {
+      const data = entry.data;
+      combinedText += `[${index + 1}/${historyData.length}] ${entry.displayTitle}\n`;
+      combinedText += `URL: ${data.url}\n`;
+      combinedText += `Scraped: ${new Date(entry.timestamp).toLocaleString()}\n`;
+      combinedText += `Words: ${data.metadata.wordCount} | Sentences: ${data.metadata.sentenceCount} | Quality: ${data.metadata.qualityScore}\n`;
+      combinedText += `${'-'.repeat(40)}\n\n`;
+      
+      data.content.forEach((item) => {
+        const prefix = item.type === 'heading' ? `# ` : 
+                     item.type === 'list-item' ? `• ` : '';
+        combinedText += `${prefix}${item.text}\n\n`;
+      });
+      
+      combinedText += `\n${'='.repeat(80)}\n\n`;
+    });
+    
+    const blob = new Blob([combinedText], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    
+    // Create download link
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `clean-web-bulk-${new Date().toISOString().slice(0, 10)}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    
+    // Clean up
+    URL.revokeObjectURL(url);
+    
+    // Show success briefly
+    setTimeout(() => {
+      bulkDownloadBtn.classList.remove("loading");
+      bulkDownloadBtn.disabled = false;
+      bulkDownloadBtn.classList.add("success");
+      
+      setTimeout(() => {
+        bulkDownloadBtn.classList.remove("success");
+      }, 1500);
+    }, 800);
+    
+  } catch (error) {
+    console.error('Bulk download failed:', error);
+    
+    setTimeout(() => {
+      bulkDownloadBtn.classList.remove("loading");
+      bulkDownloadBtn.disabled = false;
+    }, 500);
+  }
+}
+
 // Initialize history on popup load
 document.addEventListener('DOMContentLoaded', async () => {
   await loadHistory();
+  
+  // Restore previously selected history item if it exists
+  if (currentHistoryId && historyData.find(item => item.id === currentHistoryId)) {
+    await loadHistoryEntry(currentHistoryId);
+  }
+  
+  // Check if we should show expanded view (has history or current data)
+  if (historyData.length > 0 || currentData) {
+    const content = document.getElementById("content");
+    content.style.display = "block";
+    document.body.classList.add('expanded');
+  }
+  
+  // Add bulk download button listener
+  document.getElementById("bulk-download").addEventListener("click", async () => {
+    await bulkDownloadHistory();
+  });
   
   // Add clear history button listener
   document.getElementById("clear-history").addEventListener("click", async () => {
     if (confirm("Clear all history? This cannot be undone.")) {
       await clearHistory();
+      
+      // If no history left, collapse the window
+      if (historyData.length === 0 && !currentData) {
+        document.body.classList.remove('expanded');
+        const content = document.getElementById("content");
+        content.style.display = "none";
+      }
     }
   });
 });

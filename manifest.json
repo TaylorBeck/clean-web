@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Clean Web",
+  "name": "Page Scraper",
   "version": "1.0",
   "description": "Scrape and clean web page content for ML or analysis.",
   "permissions": ["scripting", "activeTab", "storage"],

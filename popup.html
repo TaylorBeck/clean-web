@@ -9,6 +9,10 @@
         margin: 0;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: #333;
+        transition: min-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      
+      body.expanded {
         min-height: 500px;
       }
       
@@ -31,18 +35,24 @@
         border-radius: 16px 16px 0 0;
         padding: 20px;
         margin-top: -8px;
+        min-height: 80px;
+        transition: min-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: none;
+      }
+      
+      body.expanded .container {
         min-height: 400px;
       }
       
       .button-container {
         display: flex;
         gap: 12px;
-        margin-bottom: 20px;
+        margin-bottom: 6px;
         align-items: center;
       }
       
       button { 
-        padding: 12px 18px; 
+        padding: 14px 20px; 
         font-size: 14px; 
         border: none;
         border-radius: 10px;
@@ -53,10 +63,10 @@
       }
       
       #scrape {
-        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        background: linear-gradient(135deg, #3a8be8 0%, #00d4e0 100%);
         color: white;
         flex: 1;
-        box-shadow: 0 4px 12px rgba(79, 172, 254, 0.4);
+        box-shadow: 0 4px 12px rgba(58, 139, 232, 0.4);
       }
       
       #scrape:hover { 
@@ -98,9 +108,9 @@
       }
       
       #copy {
-        background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-        color: #2d3748;
-        box-shadow: 0 4px 12px rgba(168, 237, 234, 0.4);
+        background: linear-gradient(135deg, #7dd8d4 0%, #e6a8c0 100%);
+        color: #ffffff;
+        box-shadow: 0 4px 12px rgba(125, 216, 212, 0.4);
       }
       
       #copy:hover { 
@@ -109,9 +119,9 @@
       }
       
       #download {
-        background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
-        color: #8b4513;
-        box-shadow: 0 4px 12px rgba(252, 182, 159, 0.4);
+        background: linear-gradient(135deg, #e6d4b8 0%, #e6a07a 100%);
+        color: #ffffff;
+        box-shadow: 0 4px 12px rgba(230, 212, 184, 0.4);
       }
       
       #download:hover:not(:disabled) { 
@@ -140,6 +150,11 @@
       }
       
       .icon-button.loading .button-icon {
+        display: none;
+      }
+      
+      .success-icon,
+      .error-icon {
         display: none;
       }
       
@@ -259,8 +274,8 @@
       }
       
       .history-title {
-        font-weight: 500;
-        font-size: 12px;
+        font-weight: 400;
+        font-size: 14px;
         color: #64748b;
       }
       
@@ -293,6 +308,56 @@
       .clear-btn:active {
         transform: translateY(0);
         box-shadow: 0 2px 4px rgba(239, 68, 68, 0.2);
+      }
+      
+      .history-actions {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      
+      .bulk-download-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        min-width: 32px;
+        padding: 0;
+        background: rgba(34, 197, 94, 0.1);
+        border: 1px solid rgba(34, 197, 94, 0.2);
+        color: #22c55e;
+      }
+      
+      .bulk-download-btn:hover {
+        background: rgba(34, 197, 94, 0.15);
+        border-color: rgba(22, 163, 74, 0.3);
+        color: #16a34a;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(34, 197, 94, 0.25);
+      }
+      
+      .bulk-download-btn:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 4px rgba(34, 197, 94, 0.2);
+      }
+      
+      .bulk-download-btn.loading {
+        color: #94a3b8;
+        background: rgba(148, 163, 184, 0.1);
+        border-color: rgba(148, 163, 184, 0.2);
+        cursor: not-allowed;
+      }
+      
+      .bulk-download-btn.success {
+        color: #22c55e;
+        background: rgba(34, 197, 94, 0.2);
+        border-color: rgba(34, 197, 94, 0.4);
       }
       
       .history-list {
@@ -460,7 +525,6 @@
   </head>
   <body>
     <div class="header">
-      <h1>Clean Web</h1>
       <div class="button-container">
         <button id="scrape">Scrape & Clean</button>
         <div class="action-buttons" id="action-buttons">
@@ -469,7 +533,7 @@
               <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
               <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
             </svg>
-            <svg class="success-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+            <svg class="success-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="10"></circle>
               <polyline points="9,12 11,14 15,10"></polyline>
             </svg>
@@ -485,7 +549,7 @@
               <polyline points="7,10 12,15 17,10"></polyline>
               <line x1="12" y1="15" x2="12" y2="3"></line>
             </svg>
-            <svg class="success-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+            <svg class="success-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="20,6 9,17 4,12"></polyline>
             </svg>
             <svg class="error-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
@@ -498,7 +562,7 @@
       </div>
     </div>
     
-    <div class="container">
+    <div id="content" class="container">
       <div id="status" class="status" style="display: none;"></div>
       
       <div id="progress-section" class="progress-container" style="display: none;">
@@ -511,7 +575,15 @@
       <div id="history-section" class="scrape-history" style="display: none;">
         <div class="history-header">
           <span class="history-title">Recent Scrapes</span>
-          <button id="clear-history" class="clear-btn" title="Clear All History">
+          <div class="history-actions">
+            <button id="bulk-download" class="bulk-download-btn" title="Download All History">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7,10 12,15 17,10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+            </button>
+            <button id="clear-history" class="clear-btn" title="Clear All History">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="3,6 5,6 21,6"></polyline>
               <path d="M19,6v14a2,2 0 0,1 -2,2H7a2,2 0 0,1 -2,-2V6m3,0V4a2,2 0 0,1 2,-2h4a2,2 0 0,1 2,2v2"></path>
@@ -519,6 +591,7 @@
               <line x1="14" y1="11" x2="14" y2="17"></line>
             </svg>
           </button>
+          </div>
         </div>
         <div id="history-list" class="history-list">
           <div class="no-history">No scraped pages yet</div>

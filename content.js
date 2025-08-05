@@ -128,6 +128,4 @@ chrome.runtime.sendMessage({
 // Log for debugging
 console.log('Cleaned Data:', cleanedData);
 
-// Data sent to popup via message (no alert needed)
-
 })(); // End of IIFE
