@@ -1,6 +1,5 @@
-# Page Scraper - Scrape & Clean Any Page
-
-Page Scraper filters out boilerplate content, navigation elements, and ads to deliver high-quality, structured text data. It aims to be a powerful Chrome extension that intelligently extracts and cleans web page content for analysis, machine learning, or research purposes. 
+# Page Scraper
+Scrape and clean any page - filter out boilerplate content, navigation elements, and ads to deliver high-quality, structured text data. It aims to be a lightweight Chrome extension that extracts and cleans web page content for analysis, machine learning, or research purposes. 
 
 <img src="ex.png" width="1000" alt="Page Scraper Demo">
 
@@ -102,7 +101,7 @@ page-scraper/
 ├── manifest.json       # Extension configuration
 ├── popup.html         # Main interface
 ├── popup.js           # UI logic and data management
-├── content.js         # Content extraction algorithm
+├── content.js         # Content extraction
 ├── background.js      # Service worker
 ├── icon.png          # Extension icon
 └── ex.png            # Demo screenshot
