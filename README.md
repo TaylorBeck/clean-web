@@ -2,7 +2,7 @@
 
 Page Scraper filters out boilerplate content, navigation elements, and ads to deliver high-quality, structured text data. It aims to be a powerful Chrome extension that intelligently extracts and cleans web page content for analysis, machine learning, or research purposes. 
 
-<img src="ex-2.png" width="1000" alt="Page Scraper Demo">
+<img src="ex.png" width="1000" alt="Page Scraper Demo">
 
 ## ✨ Features
 
