@@ -117,14 +117,4 @@ Contributions are welcome! Feel free to:
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🔗 Links
-
-- [Chrome Web Store](#) *(Coming Soon)*
-- [Report Issues](#)
-- [Feature Requests](#)
-
----
-
-*Built with ❤️ for researchers, developers, and data enthusiasts*
+Feel free to use Page Scraper in any way you want.
